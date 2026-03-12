@@ -96,52 +96,6 @@ public class ServerDetector {
         type = getServerType();
     }
 
-    private static String getServerType() {
-        if (type == null) {
-
-            String tmp = null;
-
-            if (isGeronimo()) {
-                tmp = GERONIMO_ID;
-            } else if (isGlassfish()) {
-                tmp = GLASSFISH_ID;
-            } else if (isJBoss()) {
-                tmp = JBOSS_ID;
-            } else if (isJOnAS()) {
-                tmp = JONAS_ID;
-            } else if (isResin()) {
-                tmp = RESIN_ID;
-            } else if (isWebLogic()) {
-                tmp = WEBLOGIC_ID;
-            } else if (isWebSphere()) {
-                tmp = WEBSPHERE_ID;
-            }
-            //check for tomcat or jetty - standalone or embedded
-            if (isTomcat()) {
-                if (tmp == null) {
-                    tmp = TOMCAT_ID;
-                } else {
-                    tmp += "-" + TOMCAT_ID;
-                }
-            } else if (isJetty()) {
-                if (tmp == null) {
-                    tmp = JETTY_ID;
-                } else {
-                    tmp += "-" + JETTY_ID;
-                }
-            }
-
-            if (tmp == null) {
-                throw new RuntimeException("Server is not supported");
-            }
-
-            return tmp;
-        } else {
-            return type;
-        }
-
-    }
-
     /**
      * <p>isGeronimo.</p>
      *
@@ -255,6 +209,52 @@ public class ServerDetector {
             websphere = detect(WEBSPHERE_CLASS);
         }
         return websphere;
+    }
+
+    private static String getServerType() {
+        if (type == null) {
+
+            String tmp = null;
+
+            if (isGeronimo()) {
+                tmp = GERONIMO_ID;
+            } else if (isGlassfish()) {
+                tmp = GLASSFISH_ID;
+            } else if (isJBoss()) {
+                tmp = JBOSS_ID;
+            } else if (isJOnAS()) {
+                tmp = JONAS_ID;
+            } else if (isResin()) {
+                tmp = RESIN_ID;
+            } else if (isWebLogic()) {
+                tmp = WEBLOGIC_ID;
+            } else if (isWebSphere()) {
+                tmp = WEBSPHERE_ID;
+            }
+            //check for tomcat or jetty - standalone or embedded
+            if (isTomcat()) {
+                if (tmp == null) {
+                    tmp = TOMCAT_ID;
+                } else {
+                    tmp += "-" + TOMCAT_ID;
+                }
+            } else if (isJetty()) {
+                if (tmp == null) {
+                    tmp = JETTY_ID;
+                } else {
+                    tmp += "-" + JETTY_ID;
+                }
+            }
+
+            if (tmp == null) {
+                throw new RuntimeException("Server is not supported");
+            }
+
+            return tmp;
+        } else {
+            return type;
+        }
+
     }
 
     private static boolean detect(String className) {

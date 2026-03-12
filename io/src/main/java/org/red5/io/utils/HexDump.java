@@ -670,6 +670,31 @@ public class HexDump {
         return result.toByteArray();
     }
 
+    /**
+     * <p>formatHexDump.</p>
+     *
+     * @param in a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
+    public static String formatHexDump(String in) {
+        int chunk = 60;
+        StringBuilder out = new StringBuilder();
+        int from = 0;
+        int to = 0;
+        int size = in.length();
+        while (from < size) {
+            if (size < from + chunk) {
+                to = size;
+            } else {
+                to = from + chunk;
+            }
+            out.append(in.substring(from, to));
+            out.append('\n');
+            from = to;
+        }
+        return out.toString();
+    }
+
     /*
      * Converts a byte to hex digit and writes to the supplied buffer
      */
@@ -707,31 +732,6 @@ public class HexDump {
                 buf.append(BIT_DIGIT[0]);
             }
         }
-    }
-
-    /**
-     * <p>formatHexDump.</p>
-     *
-     * @param in a {@link java.lang.String} object
-     * @return a {@link java.lang.String} object
-     */
-    public static String formatHexDump(String in) {
-        int chunk = 60;
-        StringBuilder out = new StringBuilder();
-        int from = 0;
-        int to = 0;
-        int size = in.length();
-        while (from < size) {
-            if (size < from + chunk) {
-                to = size;
-            } else {
-                to = from + chunk;
-            }
-            out.append(in.substring(from, to));
-            out.append('\n');
-            from = to;
-        }
-        return out.toString();
     }
 
 }
