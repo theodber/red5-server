@@ -109,17 +109,17 @@ public class DSRemotingClient extends RemotingClient {
             Output.putString(result, header.getName());
             result.put(header.getMustUnderstand() ? (byte) 0x01 : (byte) 0x00);
 
-            IoBuffer tmp = IoBuffer.allocate(1024);
-            tmp.setAutoExpand(true);
-            Output tmpOut = new Output(tmp);
+            IoBuffer encodedPayload = IoBuffer.allocate(1024);
+            encodedPayload.setAutoExpand(true);
+            Output tmpOut = new Output(encodedPayload);
             Serializer.serialize(tmpOut, header.getValue());
-            tmp.flip();
+            encodedPayload.flip();
             // Size of header data
-            result.putInt(tmp.limit());
+            result.putInt(encodedPayload.limit());
             // Header data
-            result.put(tmp);
-            tmp.free();
-            tmp = null;
+            result.put(encodedPayload);
+            encodedPayload.free();
+            encodedPayload = null;
         }
         // One body
         result.putShort((short) 1);
@@ -130,9 +130,9 @@ public class DSRemotingClient extends RemotingClient {
         //responseURI
         Output.putString(result, "/" + sequenceCounter++);
         // Serialize parameters
-        IoBuffer tmp = IoBuffer.allocate(1024);
-        tmp.setAutoExpand(true);
-        Output tmpOut = new Output(tmp);
+        IoBuffer encodedPayload = IoBuffer.allocate(1024);
+        encodedPayload.setAutoExpand(true);
+        Output tmpOut = new Output(encodedPayload);
         //if the params are null send the NULL AMF type
         //this should fix APPSERVER-296
         if (params == null) {
@@ -140,12 +140,12 @@ public class DSRemotingClient extends RemotingClient {
         } else {
             tmpOut.writeArray(params);
         }
-        tmp.flip();
+        encodedPayload.flip();
         // Store size and parameters
-        result.putInt(tmp.limit());
-        result.put(tmp);
-        tmp.free();
-        tmp = null;
+        result.putInt(encodedPayload.limit());
+        result.put(encodedPayload);
+        encodedPayload.free();
+        encodedPayload = null;
 
         result.flip();
         return result;

@@ -234,9 +234,9 @@ public class RTMPTServlet extends HttpServlet {
      *            Servlet request
      */
     protected void setRequestInfo(HttpServletRequest req) {
-        String[] arr = req.getRequestURI().trim().split("/");
-        log.trace("Request parts: {}", Arrays.toString(arr));
-        RequestInfo info = new RequestInfo(arr[2], Integer.valueOf(arr[3]));
+        String[] pathSegments = req.getRequestURI().trim().split("/");
+        log.trace("Request parts: {}", Arrays.toString(pathSegments));
+        RequestInfo info = new RequestInfo(pathSegments[2], Integer.valueOf(pathSegments[3]));
         requestInfo.set(info);
     }
 
