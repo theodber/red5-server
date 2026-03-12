@@ -42,6 +42,10 @@ import org.slf4j.LoggerFactory;
  */
 public class DSRemotingClient extends RemotingClient {
 
+    private static final long DSID_POLL_WAIT_MS = 1_000L;
+
+    private static final long POLL_INTERVAL_MS = 5_000L;
+
     /** Constant <code>log</code> */
     protected static Logger log = LoggerFactory.getLogger(DSRemotingClient.class);
 
@@ -364,7 +368,7 @@ public class DSRemotingClient extends RemotingClient {
             }
             //wait a second for a dsid
             do {
-                Thread.sleep(1000);
+                Thread.sleep(DSID_POLL_WAIT_MS);
                 log.info("Done with sleeping");
             } while (client.getDataSourceId().equals("nil"));
             //send subscribe
@@ -387,7 +391,7 @@ public class DSRemotingClient extends RemotingClient {
             //poll every 5 seconds for 60
             int loop = 12;
             do {
-                Thread.sleep(5000);
+                Thread.sleep(POLL_INTERVAL_MS);
                 log.info("Done with sleeping");
                 //send poll
                 //0 messages - returns DSK

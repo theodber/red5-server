@@ -55,6 +55,12 @@ public class WebSocketConnection extends AttributeStore implements Comparable<We
     // Sending async on windows times out
     private static boolean useAsync;
 
+    private static final long DEFAULT_ABNORMAL_CLOSE_SEND_TIMEOUT_MS = 10_000L;
+
+    private static final long DEFAULT_SESSION_CLOSE_TIMEOUT_MS = 5_000L;
+
+    private static final int MAX_WS_TEXT_MESSAGE_BYTES = 10_000;
+
     private static long sendTimeout = 8000L, readTimeout = 30000L;
 
     private static final AtomicLongFieldUpdater<WebSocketConnection> readBytesUpdater = AtomicLongFieldUpdater.newUpdater(WebSocketConnection.class, "readBytes");
@@ -174,15 +180,15 @@ public class WebSocketConnection extends AttributeStore implements Comparable<We
         // write timeout used when sending WebSocket messages in blocking mode
         userProps.put(Constants.BLOCKING_SEND_TIMEOUT_PROPERTY, Long.getLong(Constants.BLOCKING_SEND_TIMEOUT_PROPERTY, 8000L).longValue());
         // write timeout Tomcat uses when writing a session close message when the close is abnormal
-        userProps.put(Constants.ABNORMAL_SESSION_CLOSE_SEND_TIMEOUT_PROPERTY, Long.getLong(Constants.ABNORMAL_SESSION_CLOSE_SEND_TIMEOUT_PROPERTY, 10000L).longValue());
+        userProps.put(Constants.ABNORMAL_SESSION_CLOSE_SEND_TIMEOUT_PROPERTY, Long.getLong(Constants.ABNORMAL_SESSION_CLOSE_SEND_TIMEOUT_PROPERTY, DEFAULT_ABNORMAL_CLOSE_SEND_TIMEOUT_MS).longValue());
         // time Tomcat waits for a peer to send a WebSocket session close message after Tomcat has sent a close message
         // to the peer
-        userProps.put(Constants.SESSION_CLOSE_TIMEOUT_PROPERTY, Long.getLong(Constants.SESSION_CLOSE_TIMEOUT_PROPERTY, 5000L).longValue());
+        userProps.put(Constants.SESSION_CLOSE_TIMEOUT_PROPERTY, Long.getLong(Constants.SESSION_CLOSE_TIMEOUT_PROPERTY, DEFAULT_SESSION_CLOSE_TIMEOUT_MS).longValue());
         if (isDebug) {
             log.debug("userProps: {}", userProps);
         }
         // set maximum messages size to 10,000 bytes
-        session.setMaxTextMessageBufferSize(10000);
+        session.setMaxTextMessageBufferSize(MAX_WS_TEXT_MESSAGE_BYTES);
         // set maximum idle timeout to the largest of the read and send timeouts
         session.setMaxIdleTimeout(Math.max(readTimeout, sendTimeout));
     }

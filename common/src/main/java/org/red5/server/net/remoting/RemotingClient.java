@@ -49,6 +49,12 @@ public class RemotingClient implements IRemotingClient {
     /** Content MIME type for HTTP requests. */
     protected static final String CONTENT_TYPE = "application/x-amf";
 
+    private static final int ENCODE_BUFFER_SIZE = 1024;
+
+    private static final int EXPECTED_RESPONSE_COUNT = 1;
+
+    private static final int MIN_RESPONSE_CONTENT_LENGTH = 16;
+
     /** HTTP client for remoting calls. */
     protected HttpClient client;
 
@@ -129,7 +135,7 @@ public class RemotingClient implements IRemotingClient {
      */
     private IoBuffer encodeInvoke(String method, Object[] params) {
         log.debug("RemotingClient encodeInvoke - method: {} params: {}", method, params);
-        IoBuffer result = IoBuffer.allocate(1024);
+        IoBuffer result = IoBuffer.allocate(ENCODE_BUFFER_SIZE);
         result.setAutoExpand(true);
         // XXX: which is the correct version?
         result.putShort((short) 0);
@@ -139,7 +145,7 @@ public class RemotingClient implements IRemotingClient {
         for (RemotingHeader header : hdr) {
             Output.putString(result, header.name);
             result.put(header.required ? (byte) 0x01 : (byte) 0x00);
-            IoBuffer tmp = IoBuffer.allocate(1024);
+            IoBuffer tmp = IoBuffer.allocate(ENCODE_BUFFER_SIZE);
             tmp.setAutoExpand(true);
             Output tmpOut = new Output(tmp);
             Serializer.serialize(tmpOut, header.data);
@@ -161,7 +167,7 @@ public class RemotingClient implements IRemotingClient {
         Output.putString(result, "");
 
         // Serialize parameters
-        IoBuffer tmp = IoBuffer.allocate(1024);
+        IoBuffer tmp = IoBuffer.allocate(ENCODE_BUFFER_SIZE);
         tmp.setAutoExpand(true);
         Output tmpOut = new Output(tmp);
         //if the params are null send the NULL AMF type
@@ -244,7 +250,7 @@ public class RemotingClient implements IRemotingClient {
         log.debug("decodeResult - data limit: {}", (data != null ? data.limit() : 0));
         processHeaders(data);
         int count = data.getUnsignedShort();
-        if (count != 1) {
+        if (count != EXPECTED_RESPONSE_COUNT) {
             throw new RuntimeException("Expected exactly one result but got " + count);
         }
         Input input = new Input(data);
@@ -337,7 +343,7 @@ public class RemotingClient implements IRemotingClient {
                     int contentLength = (int) entity.getContentLength();
                     //default the content length to 16 if post doesn't contain a good value
                     if (contentLength < 1) {
-                        contentLength = 16;
+                        contentLength = MIN_RESPONSE_CONTENT_LENGTH;
                     }
                     // get the response as bytes
                     byte[] bytes = EntityUtils.toByteArray(entity);

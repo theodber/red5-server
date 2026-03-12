@@ -26,6 +26,8 @@ import org.red5.server.Shutdown;
  */
 public class EngineLauncher implements Daemon {
 
+    private static final long WAIT_STOP_CHECK_MS = 60_000L;
+
     private static EngineLauncher engineLauncherInstance = new EngineLauncher();
 
     private static AtomicBoolean stopped = new AtomicBoolean(false);
@@ -92,7 +94,7 @@ public class EngineLauncher implements Daemon {
             // don't return until stopped
             synchronized (this) {
                 try {
-                    this.wait(60000); // wait 1 minute and check if stopped
+                    this.wait(WAIT_STOP_CHECK_MS); // wait 1 minute and check if stopped
                 } catch (InterruptedException ie) {
                 }
             }
