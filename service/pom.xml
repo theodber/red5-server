@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.red5</groupId>
+        <artifactId>red5-parent</artifactId>
+        <version>2.0.29</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>red5-service</artifactId>
+    <name>Red5 :: Service</name>
+    <description>The Red5 server service daemon</description>
+    <packaging>jar</packaging>
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+        <commons-daemon.version>1.4.1</commons-daemon.version>
+    </properties>
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Add-Opens>java.base/java.lang jdk.management/com.sun.management.internal java.rmi/sun.rmi.transport java.base/javax.crypto java.base/sun.security.provider java.base/jdk.crypto.cryptoki java.base/jdk.crypto.ec</Add-Opens>
+                            <Add-Exports>jdk.crypto.cryptoki/sun.security.pkcs11.SunPKCS11</Add-Exports>
+                            <Build-OS>${os.name} ${os.version}</Build-OS>
+                            <Build-Java>Java ${java.version}</Build-Java>
+                            <Build-Number>${buildNumber}</Build-Number>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <includeScope>compile</includeScope>
+                            <excludeTransitive>false</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/daemon.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <!-- this is used for inheritance merges -->
+                        <phase>package</phase>
+                        <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>commons-daemon</groupId>
+            <artifactId>commons-daemon</artifactId>
+            <version>${commons-daemon.version}</version>
+        </dependency>
+    </dependencies>
+</project>
