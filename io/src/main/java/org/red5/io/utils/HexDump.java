@@ -710,24 +710,6 @@ public class HexDump {
     }
 
     /**
-     * Returns a string of 8 hexadecimal digits (most significant digit first) corresponding to the integer <i>n</i> , which is treated as
-     * unsigned.
-     *
-     * @param n
-     *            Description of Parameter
-     * @return Description of the Returned Value
-     */
-    @SuppressWarnings("unused")
-    private static String intToHexString(int n) {
-        char[] buf = new char[8];
-        for (int i = 7; i >= 0; i--) {
-            buf[i] = HEX_DIGITS[n & 0x0F];
-            n >>>= 4;
-        }
-        return new String(buf);
-    }
-
-    /**
      * <p>formatHexDump.</p>
      *
      * @param in a {@link java.lang.String} object

@@ -106,22 +106,4 @@ public class CertificateGrabber {
         log.info("Certificate chain ({} certs) saved to: {}", certs.length, fileName);
     }
 
-    /**
-     * Saves the given X509 certificate to a file in PEM format.
-     *
-     * @param cert the X509 certificate to save
-     * @param fileName name of the file to save the certificate to
-     * @throws Exception if an error occurs while saving the certificate
-     */
-    @SuppressWarnings("unused")
-    private static void saveCertificate(X509Certificate cert, String fileName) throws Exception {
-        // Save as PEM format
-        try (FileWriter fw = new FileWriter(fileName); PrintWriter pw = new PrintWriter(fw)) {
-            pw.println("-----BEGIN CERTIFICATE-----");
-            pw.println(Base64.encodeBase64String(cert.getEncoded()));
-            pw.println("-----END CERTIFICATE-----");
-        }
-        log.debug("Certificate saved to: {}", fileName);
-    }
-
 }

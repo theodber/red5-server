@@ -330,23 +330,6 @@ public class DSRemotingClient extends RemotingClient {
     }
 
     /**
-     * Used for debugging byte stream.
-     *
-     * @param data
-     *            IoBuffer
-     */
-    @SuppressWarnings("unused")
-    private static final void dump(IoBuffer data) {
-        log.debug("Hex: {}", data.getHexDump());
-        int pos = data.position();
-        byte[] bar = new byte[data.limit() - data.position()];
-        data.get(bar);
-        log.debug("Str {}", new String(bar));
-        bar = null;
-        data.position(pos);
-    }
-
-    /**
      * <p>main.</p>
      *
      * @param args an array of {@link java.lang.String} objects
