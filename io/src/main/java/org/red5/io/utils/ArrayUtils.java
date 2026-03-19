@@ -25,27 +25,51 @@ public final class ArrayUtils {
      * @return a {@link java.lang.Object} object
      */
     public static Object getArray(Class<?> type, int count) {
-        if (byte.class.isAssignableFrom(type)) {
-            return new byte[count];
-        } else if (short.class.isAssignableFrom(type)) {
-            return new short[count];
-        } else if (int.class.isAssignableFrom(type)) {
-            return new int[count];
-        } else if (long.class.isAssignableFrom(type)) {
-            return new long[count];
-        } else if (float.class.isAssignableFrom(type)) {
-            return new float[count];
-        } else if (double.class.isAssignableFrom(type)) {
-            return new double[count];
-        } else if (boolean.class.isAssignableFrom(type)) {
-            return new boolean[count];
-        } else if (char.class.isAssignableFrom(type)) {
-            return new char[count];
-        } else if (null != type) {
+        Object primitiveArray = getPrimitiveArray(type, count);
+        if (primitiveArray != null) {
+            return primitiveArray;
+        } else if (type != null) {
             return Array.newInstance(type, count);
         } else {
             return new Object[count];
         }
+    }
+
+    /**
+     * Creates an array for primitive component types.
+     *
+     * @param type
+     *            component type
+     * @param count
+     *            desired length
+     * @return primitive array instance, or {@code null} if type is not primitive
+     */
+    private static Object getPrimitiveArray(Class<?> type, int count) {
+        if (type == byte.class) {
+            return new byte[count];
+        }
+        if (type == short.class) {
+            return new short[count];
+        }
+        if (type == int.class) {
+            return new int[count];
+        }
+        if (type == long.class) {
+            return new long[count];
+        }
+        if (type == float.class) {
+            return new float[count];
+        }
+        if (type == double.class) {
+            return new double[count];
+        }
+        if (type == boolean.class) {
+            return new boolean[count];
+        }
+        if (type == char.class) {
+            return new char[count];
+        }
+        return null;
     }
 
     /**

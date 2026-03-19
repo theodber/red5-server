@@ -139,6 +139,21 @@ public class DataTypes {
      *            AS data type as byte
      */
     public static String toStringValue(byte dataType) {
+        String coreTypeValue = coreTypeToString(dataType);
+        if (coreTypeValue != null) {
+            return coreTypeValue;
+        }
+        return customTypeToString(dataType);
+    }
+
+    /**
+     * Maps core and optional Red5 data type markers to their display string.
+     *
+     * @param dataType
+     *            data type marker
+     * @return mapped display value, or {@code null} if marker is not a known core type
+     */
+    private static String coreTypeToString(byte dataType) {
         switch (dataType) {
             case CORE_SKIP:
                 return "skip";
@@ -172,7 +187,19 @@ public class DataTypes {
                 return "Vector<Object>";
             case OPT_REFERENCE:
                 return "Reference";
+            default:
+                return null;
         }
+    }
+
+    /**
+     * Maps custom type ranges to their display string.
+     *
+     * @param dataType
+     *            data type marker
+     * @return mapped display value for custom ranges
+     */
+    private static String customTypeToString(byte dataType) {
         if (dataType >= CUSTOM_MOCK_MASK && dataType < CUSTOM_AMF_MASK) {
             return "MOCK[" + (dataType - CUSTOM_MOCK_MASK) + ']';
         }
