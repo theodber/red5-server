@@ -166,7 +166,7 @@ public class ServiceUtils {
      *            object to notify when result is received
      */
     public static void invokeOnAllConnections(IScope scope, String method, Object[] params, IPendingServiceCallback callback) {
-        invokeOnClient(null, scope, method, params, callback);
+        invokeOnAllScopeConnections(scope, method, params, callback);
     }
 
     /**
