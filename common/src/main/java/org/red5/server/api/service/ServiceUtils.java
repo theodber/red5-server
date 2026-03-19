@@ -199,7 +199,14 @@ public class ServiceUtils {
      *            parameters to pass to the method
      */
     public static void invokeOnClient(IClient client, IScope scope, String method, Object[] params) {
-        invokeOnClient(client, scope, method, params, null);
+        if (client == null) {
+            invokeOnAllScopeConnections(scope, method, params, null);
+        } else {
+            IConnection conn = scope.lookupConnection(client);
+            if (conn != null) {
+                invokeOnConnection(conn, method, params);
+            }
+        }
     }
 
     /**
