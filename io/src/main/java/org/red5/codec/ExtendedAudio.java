@@ -170,9 +170,9 @@ public class ExtendedAudio extends AbstractAudio {
                             // in the order that it appears in the bitstream. First entry (i.e., index 0) specifies the
                             // speaker layout for channel 1. Subsequent entries specify the speaker layout for the next
                             // channels (e.g., second entry for channel 2, third entry for channel 3, etc.).
-                            audioChannelMap = new AudioChannel[channels];
+                            audioChannelsByIndex = new AudioChannel[channels];
                             for (int i = 0; i < channels; i++) {
-                                audioChannelMap[i] = AudioChannel.fromChannel(data.get());
+                                audioChannelsByIndex[i] = AudioChannel.fromChannel(data.get());
                             }
                         }
                         if (audioChannelOrder == AudioChannelOrder.Native) {

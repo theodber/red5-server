@@ -29,7 +29,7 @@ public class Deserializer {
 
     private static final Logger log = LoggerFactory.getLogger(Deserializer.class);
 
-    private static Set<String> BLACK_LIST = Collections.emptySet();
+    private static Set<String> BLACK_SET = Collections.emptySet();
 
     private Deserializer() {
     }
@@ -47,7 +47,7 @@ public class Deserializer {
             for (Entry<?, ?> e : bl.entrySet()) {
                 set.add((String) e.getKey());
             }
-            BLACK_LIST = Collections.unmodifiableSet(set);
+            BLACK_SET = Collections.unmodifiableSet(set);
         }
     }
 
@@ -64,7 +64,7 @@ public class Deserializer {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> T deserialize(Input in, Type target) {
-        if (BLACK_LIST == null) {
+        if (BLACK_SET == null) {
             //log.info("Black list is not yet initialized");
             try {
                 loadBlackList();
@@ -152,7 +152,7 @@ public class Deserializer {
      * @return true if not blacklisted and false if it is blacklisted
      */
     public static boolean classAllowed(String className) {
-        for (String name : BLACK_LIST) {
+        for (String name : BLACK_SET) {
             if (className.startsWith(name)) {
                 return false;
             }

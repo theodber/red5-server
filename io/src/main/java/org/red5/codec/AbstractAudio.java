@@ -43,8 +43,8 @@ public class AbstractAudio implements IAudioStreamCodec {
     // audio channel order
     protected AudioChannelOrder audioChannelOrder = AudioChannelOrder.Unspecified;
 
-    // each entry specifies the speaker layout
-    protected AudioChannel[] audioChannelMap;
+    // each entry specifies the speaker layout by channel index
+    protected AudioChannel[] audioChannelsByIndex;
 
     // indicates which channels are present in the multi-channel stream
     protected int audioChannelFlags;
@@ -255,7 +255,7 @@ public class AbstractAudio implements IAudioStreamCodec {
     @Override
     public String toString() {
         if (enhanced) {
-            return "Audio [codec=" + codec + ", multitrackType=" + multitrackType + ", sampleRate=" + sampleRate + ", sampleSizeInBits=" + sampleSizeInBits + ", channels=" + channels + ", signed=" + signed + ", trackId=" + trackId + ", audioChannelOrder=" + audioChannelOrder + ", audioChannelMap=" + audioChannelMap + ", audioChannelFlags=" + audioChannelFlags + ", attributes=" + attributes + "]";
+            return "Audio [codec=" + codec + ", multitrackType=" + multitrackType + ", sampleRate=" + sampleRate + ", sampleSizeInBits=" + sampleSizeInBits + ", channels=" + channels + ", signed=" + signed + ", trackId=" + trackId + ", audioChannelOrder=" + audioChannelOrder + ", audioChannelsByIndex=" + audioChannelsByIndex + ", audioChannelFlags=" + audioChannelFlags + ", attributes=" + attributes + "]";
         }
         return "Audio [codec=" + codec + ", sampleRate=" + sampleRate + ", sampleSizeInBits=" + sampleSizeInBits + ", channels=" + channels + ", signed=" + signed + ", not enhanced]";
     }
