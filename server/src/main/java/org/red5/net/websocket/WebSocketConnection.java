@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -207,40 +209,9 @@ public class WebSocketConnection extends AttributeStore implements Comparable<We
         }
         // process the incoming string
         if (StringUtils.isNotBlank(data)) {
-            // attempt send only if the session is not closed
-            if (!wsSession.isClosed()) {
-                try {
-                    if (useAsync) {
-                        if (sendFuture != null && !sendFuture.isDone()) {
-                            try {
-                                sendFuture.get(sendTimeout, TimeUnit.MILLISECONDS);
-                            } catch (TimeoutException e) {
-                                log.warn("Send timed out {}", wsSessionId);
-                                // if the session is not open, cancel the future
-                                if (!wsSession.isOpen()) {
-                                    sendFuture.cancel(true);
-                                    return;
-                                }
-                            }
-                        }
-                        synchronized (wsSessionId) {
-                            int lengthToWrite = data.getBytes().length;
-                            sendFuture = wsSession.getAsyncRemote().sendText(data);
-                            updateWriteBytes(lengthToWrite);
-                        }
-                    } else {
-                        synchronized (wsSessionId) {
-                            int lengthToWrite = data.getBytes().length;
-                            wsSession.getBasicRemote().sendText(data);
-                            updateWriteBytes(lengthToWrite);
-                        }
-                    }
-                } catch (Exception e) {
-                    log.warn("Send text exception", e);
-                }
-            } else {
-                throw new IOException("WS session closed");
-            }
+            int lengthToWrite = data.getBytes().length;
+            sendMessage(lengthToWrite, () -> wsSession.getAsyncRemote().sendText(data), () -> wsSession.getBasicRemote().sendText(data),
+                    () -> wsSession.isOpen(), "Send text exception");
         } else {
             throw new UnsupportedEncodingException("Cannot send a null string");
         }
@@ -256,33 +227,38 @@ public class WebSocketConnection extends AttributeStore implements Comparable<We
         if (isDebug) {
             log.debug("send binary: {}", Arrays.toString(buf));
         }
+        sendMessage(buf.length, () -> wsSession.getAsyncRemote().sendBinary(ByteBuffer.wrap(buf)),
+                () -> wsSession.getBasicRemote().sendBinary(ByteBuffer.wrap(buf)), () -> isConnected(), "Send bytes exception");
+    }
+
+    private void sendMessage(int lengthToWrite, Supplier<Future<Void>> asyncSender, Runnable basicSender, BooleanSupplier canCancelFuture,
+            String exceptionMessage) throws IOException {
         if (!wsSession.isClosed()) {
             try {
-                // send the bytes
                 if (useAsync) {
                     if (sendFuture != null && !sendFuture.isDone()) {
                         try {
                             sendFuture.get(sendTimeout, TimeUnit.MILLISECONDS);
                         } catch (TimeoutException e) {
                             log.warn("Send timed out {}", wsSessionId);
-                            if (!isConnected()) {
+                            if (!canCancelFuture.getAsBoolean()) {
                                 sendFuture.cancel(true);
                                 return;
                             }
                         }
                     }
                     synchronized (wsSessionId) {
-                        sendFuture = wsSession.getAsyncRemote().sendBinary(ByteBuffer.wrap(buf));
-                        updateWriteBytes(buf.length);
+                        sendFuture = asyncSender.get();
+                        updateWriteBytes(lengthToWrite);
                     }
                 } else {
                     synchronized (wsSessionId) {
-                        wsSession.getBasicRemote().sendBinary(ByteBuffer.wrap(buf));
-                        updateWriteBytes(buf.length);
+                        basicSender.run();
+                        updateWriteBytes(lengthToWrite);
                     }
                 }
             } catch (Exception e) {
-                log.warn("Send bytes exception", e);
+                log.warn(exceptionMessage, e);
             }
         } else {
             throw new IOException("WS session closed");
