@@ -25,7 +25,7 @@ public final class ArrayUtils {
      * @return a {@link java.lang.Object} object
      */
     public static Object getArray(Class<?> type, int count) {
-        Object primitiveArray = getPrimitiveArray(type, count);
+        Object primitiveArray = PrimitiveArrayUtils.createPrimitiveArray(type, count);
         if (primitiveArray != null) {
             return primitiveArray;
         } else if (type != null) {
@@ -33,43 +33,6 @@ public final class ArrayUtils {
         } else {
             return new Object[count];
         }
-    }
-
-    /**
-     * Creates an array for primitive component types.
-     *
-     * @param type
-     *            component type
-     * @param count
-     *            desired length
-     * @return primitive array instance, or {@code null} if type is not primitive
-     */
-    private static Object getPrimitiveArray(Class<?> type, int count) {
-        if (type == byte.class) {
-            return new byte[count];
-        }
-        if (type == short.class) {
-            return new short[count];
-        }
-        if (type == int.class) {
-            return new int[count];
-        }
-        if (type == long.class) {
-            return new long[count];
-        }
-        if (type == float.class) {
-            return new float[count];
-        }
-        if (type == double.class) {
-            return new double[count];
-        }
-        if (type == boolean.class) {
-            return new boolean[count];
-        }
-        if (type == char.class) {
-            return new char[count];
-        }
-        return null;
     }
 
     /**
@@ -81,25 +44,11 @@ public final class ArrayUtils {
      */
     @SuppressWarnings({ "rawtypes" })
     public static Object fillArray(Class<?> type, Collection collection) {
-        if (byte.class.isAssignableFrom(type)) {
-            return toByteArray(collection);
-        } else if (short.class.isAssignableFrom(type)) {
-            return toShortArray(collection);
-        } else if (int.class.isAssignableFrom(type)) {
-            return toIntegerArray(collection);
-        } else if (long.class.isAssignableFrom(type)) {
-            return toLongArray(collection);
-        } else if (float.class.isAssignableFrom(type)) {
-            return toFloatArray(collection);
-        } else if (double.class.isAssignableFrom(type)) {
-            return toDoubleArray(collection);
-        } else if (boolean.class.isAssignableFrom(type)) {
-            return toBooleanArray(collection);
-        } else if (char.class.isAssignableFrom(type)) {
-            return toCharacterArray(collection);
-        } else {
+        Object primitiveArray = PrimitiveArrayUtils.fillPrimitiveArray(type, collection);
+        if (primitiveArray == null) {
             return toObjectArray(type, collection);
         }
+        return primitiveArray;
     }
 
     /**
@@ -112,158 +61,11 @@ public final class ArrayUtils {
      */
     @SuppressWarnings({ "rawtypes" })
     public static Object fillArray(Class<?> type, Object array, Collection collection) {
-        if (byte.class.isAssignableFrom(type)) {
-            return toByteArray(array, collection);
-        } else if (short.class.isAssignableFrom(type)) {
-            return toShortArray(array, collection);
-        } else if (int.class.isAssignableFrom(type)) {
-            return toIntegerArray(array, collection);
-        } else if (long.class.isAssignableFrom(type)) {
-            return toLongArray(array, collection);
-        } else if (float.class.isAssignableFrom(type)) {
-            return toFloatArray(array, collection);
-        } else if (double.class.isAssignableFrom(type)) {
-            return toDoubleArray(array, collection);
-        } else if (boolean.class.isAssignableFrom(type)) {
-            return toBooleanArray(array, collection);
-        } else if (char.class.isAssignableFrom(type)) {
-            return toCharacterArray(array, collection);
-        } else {
+        Object primitiveArray = PrimitiveArrayUtils.fillPrimitiveArray(type, array, collection);
+        if (primitiveArray == null) {
             return toObjectArray(array, collection);
         }
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toByteArray(Collection collection) {
-        return toByteArray(new byte[collection.size()], collection);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toByteArray(Object array, Collection collection) {
-        byte[] ba = (byte[]) array;
-        int i = 0;
-        for (Object o : collection) {
-            byte b = ((Byte) o).byteValue();
-            ba[i++] = b;
-        }
-        return ba;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toShortArray(Collection collection) {
-        return toShortArray(new short[collection.size()], collection);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toShortArray(Object array, Collection collection) {
-        short[] sa = (short[]) array;
-        int i = 0;
-        for (Object o : collection) {
-            short s = ((Short) o).shortValue();
-            sa[i++] = s;
-        }
-        return sa;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toIntegerArray(Collection collection) {
-        return toIntegerArray(new int[collection.size()], collection);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toIntegerArray(Object array, Collection collection) {
-        int[] ia = (int[]) array;
-        int i = 0;
-        for (Object o : collection) {
-            int j = ((Integer) o).intValue();
-            ia[i++] = j;
-        }
-        return ia;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toLongArray(Collection collection) {
-        return toLongArray(new long[collection.size()], collection);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toLongArray(Object array, Collection collection) {
-        long[] la = (long[]) array;
-        int i = 0;
-        for (Object o : collection) {
-            long l = ((Long) o).longValue();
-            la[i++] = l;
-        }
-        return la;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toFloatArray(Collection collection) {
-        return toFloatArray(new float[collection.size()], collection);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toFloatArray(Object array, Collection collection) {
-        float[] fa = (float[]) array;
-        int i = 0;
-        for (Object o : collection) {
-            float f = ((Float) o).floatValue();
-            fa[i++] = f;
-        }
-        return fa;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toDoubleArray(Collection collection) {
-        return toDoubleArray(new double[collection.size()], collection);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toDoubleArray(Object array, Collection collection) {
-        double[] da = (double[]) array;
-        int i = 0;
-        for (Object o : collection) {
-            double d;
-            if (o instanceof Integer) {
-                d = (Integer) o;
-            } else {
-                d = ((Double) o).doubleValue();
-            }
-            da[i++] = d;
-        }
-        return da;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toBooleanArray(Collection collection) {
-        return toBooleanArray(new boolean[collection.size()], collection);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toBooleanArray(Object array, Collection collection) {
-        boolean[] ba = (boolean[]) array;
-        int i = 0;
-        for (Object o : collection) {
-            boolean b = ((Boolean) o).booleanValue();
-            ba[i++] = b;
-        }
-        return ba;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toCharacterArray(Collection collection) {
-        return toCharacterArray(new char[collection.size()], collection);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private static Object toCharacterArray(Object array, Collection collection) {
-        char[] ca = (char[]) array;
-        int i = 0;
-        for (Object o : collection) {
-            char c = ((Character) o).charValue();
-            ca[i++] = c;
-        }
-        return ca;
+        return primitiveArray;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -288,23 +90,6 @@ public final class ArrayUtils {
      * @return a {@link java.lang.Class} object
      */
     public static Class<?> getGenericType(Class<?> nested) {
-        if (nested == byte.class) {
-            nested = Byte.class;
-        } else if (nested == short.class) {
-            nested = Short.class;
-        } else if (nested == int.class) {
-            nested = Integer.class;
-        } else if (nested == long.class) {
-            nested = Long.class;
-        } else if (nested == float.class) {
-            nested = Float.class;
-        } else if (nested == double.class) {
-            nested = Double.class;
-        } else if (nested == boolean.class) {
-            nested = Boolean.class;
-        } else if (nested == char.class) {
-            nested = Character.class;
-        }
-        return nested;
+        return PrimitiveArrayUtils.toWrapperType(nested);
     }
 }
