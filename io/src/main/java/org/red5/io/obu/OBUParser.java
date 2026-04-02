@@ -903,7 +903,7 @@ public class OBUParser {
      */
     private static boolean computeCodedLossless(OBPFrameHeader fh, OBPSequenceHeader seq) {
         for (int segmentId = 0; segmentId < 8; segmentId++) {
-            int qindex = getQIndex(true, segmentId, fh.quantizationParams.baseQIdx, fh, seq);
+            int qindex = getQIndex(true, segmentId, fh.quantizationParams.baseQIdx, fh);
             if (qindex != 0 || fh.quantizationParams.deltaQYDc != 0 || fh.quantizationParams.deltaQUAc != 0 || fh.quantizationParams.deltaQUDc != 0 || fh.quantizationParams.deltaQVAc != 0 || fh.quantizationParams.deltaQVDc != 0) {
                 return false;
             }
@@ -914,7 +914,7 @@ public class OBUParser {
     /*
      * This method computes the quantization index for a given segment.
      */
-    private static int getQIndex(boolean ignoreDeltaQ, int segmentId, int currentQIndex, OBPFrameHeader fh, OBPSequenceHeader seq) {
+    private static int getQIndex(boolean ignoreDeltaQ, int segmentId, int currentQIndex, OBPFrameHeader fh) {
         if (fh.segmentationParams.segmentationEnabled && fh.segmentationParams.featureEnabled[segmentId][0]) {
             int data = fh.segmentationParams.featureData[segmentId][0];
             int qindex = fh.quantizationParams.baseQIdx + data;
